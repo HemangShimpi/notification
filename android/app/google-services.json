@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194268838181",
+    "project_id": "inclass-b0757",
+    "storage_bucket": "inclass-b0757.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194268838181:android:f0f912c4c460278dfd82cc",
+        "android_client_info": {
+          "package_name": "com.example.noti"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpL7K8NEr2NMRJ2mL5OHWUJQjro321skQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
