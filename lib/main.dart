@@ -75,14 +75,14 @@ class _MyHomePageState extends State<MyHomePage> {
     messaging = FirebaseMessaging.instance;
     messaging
         .requestPermission(
-          alert: true,
-          badge: true,
-          provisional: false,
-          sound: true,
-        )
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    )
         .then((NotificationSettings settings) {
-          print("User granted permission: ${settings.authorizationStatus}");
-        });
+      print("User granted permission: ${settings.authorizationStatus}");
+    });
     // Get the FCM token
     messaging.getToken().then((String? token) {
       print("FCM Token: $token");
@@ -92,43 +92,48 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
       print("Message received: ${event.notification?.body}");
 
+      String? notificationType = event.data['notificationType'] ?? 'regular';
+      String title = event.notification?.title ?? 'New Notification';
+      String body = event.notification?.body ?? 'You have a new message.';
+
       setState(() {
-        notificationText = event.notification?.body;
-        if (notificationText != null) {
-          notificationHistory.add(notificationText!);
-        }
+        notificationText = body;
+        notificationHistory.add(body);
       });
 
-      const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-            'your_channel_id',
-            'your_channel_name',
-            channelDescription: 'your_channel_description',
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
-            actions: <AndroidNotificationAction>[
-              AndroidNotificationAction('REPLY', 'Reply'),
-              AndroidNotificationAction('MARK_READ', 'Mark as Read'),
-            ],
-          );
+      AndroidNotificationDetails androidDetails;
 
-      const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-      );
+      if (notificationType == 'important') {
+        androidDetails = AndroidNotificationDetails(
+          'important_channel',
+          'Important Notifications',
+          channelDescription: 'This channel is for important notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          color: const Color(0xFFE53935),
+          playSound: true,
+          visibility: NotificationVisibility.public,
+          enableLights: true,
+          enableVibration: true
+        );
+      } else {
+        androidDetails = AndroidNotificationDetails(
+          'regular_channel',
+          'Regular Notifications',
+          channelDescription: 'This channel is for regular notifications',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority
+        );
+      }
 
       await flutterLocalNotificationsPlugin.show(
         0,
-        event.notification?.title,
-        event.notification?.body,
-        platformChannelSpecifics,
-        payload: 'notification_payload',
+        title,
+        body,
+        NotificationDetails(android: androidDetails),
       );
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Notification clicked from background!');
-    });
   }
 
   @override
